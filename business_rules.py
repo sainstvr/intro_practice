@@ -62,6 +62,9 @@ def get_user_history(user_id):
     if "data" in data:
         return data["data"]
 
+    if "DataSet" in data:
+        return data["DataSet"]["Rows"]
+
     return data
 
 
