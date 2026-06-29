@@ -55,11 +55,31 @@
 
     <div class="block">
         <h2>1. Ввод пользователя</h2>
-        <form method="post" action="/history">
+        <form method="post" action="/login">
             <input type="number" name="user_id" placeholder="Введите user_id" value="{{ user_id or '' }}" required>
+            <button type="submit">Выбрать пользователя</button>
+        </form>
+
+        {% if user_id %}
+            <p>Текущий пользователь: <b>{{ user_id }}</b></p>
+            <form method="post" action="/logout">
+                <button type="submit">Сбросить пользователя</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="block">
+        <h2>2. Анализ покупок</h2>
+        <form method="post" action="/history">
             <button type="submit">Запустить анализ</button>
         </form>
     </div>
+
+    {% if message %}
+        <div class="block">
+            <p>{{ message }}</p>
+        </div>
+    {% endif %}
 
     {% if error %}
         <div class="block">
@@ -69,7 +89,7 @@
 
     {% if products %}
         <div class="block">
-            <h2>2. Товары пользователя {{ user_id }}</h2>
+            <h2>3. Товары пользователя {{ user_id }}</h2>
             <table>
                 <thead>
                     <tr>
@@ -97,14 +117,14 @@
 
     {% if codex_prompt %}
         <div class="block">
-            <h2>3. Текст для Codex</h2>
+            <h2>4. Текст для Codex</h2>
             <pre>{{ codex_prompt }}</pre>
         </div>
     {% endif %}
 
     {% if recommendation %}
         <div class="block">
-            <h2>4. Рекомендация Codex</h2>
+            <h2>5. Рекомендация Codex</h2>
             <pre>{{ recommendation }}</pre>
         </div>
     {% endif %}
