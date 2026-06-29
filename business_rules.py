@@ -36,7 +36,17 @@ def get_user_history(user_id):
         ]
 
     response = requests.post(loginom_url, json={"user_id": user_id}, timeout=15)
-    response.raise_for_status()
+
+    if response.status_code >= 400:
+        try:
+            error_data = response.json()
+            detail = error_data.get("detail", "")
+            inner = error_data.get("inner", {}).get("message", "")
+            message = f"{detail}. {inner}".strip(". ")
+        except ValueError:
+            message = response.text
+
+        raise RuntimeError(f"Loginom вернул ошибку {response.status_code}: {message}")
 
     data = response.json()
 
