@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Instacart Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 16px;
+        }
+
+        .block {
+            border: 1px solid #dddddd;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        input, button {
+            padding: 9px 12px;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #f3f3f3;
+        }
+
+        pre {
+            background: #f7f7f7;
+            padding: 12px;
+            white-space: pre-wrap;
+        }
+
+        .error {
+            color: #b00020;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Instacart Demo: Loginom + Flask + Codex</h1>
+
+    <div class="block">
+        <h2>1. Ввод пользователя</h2>
+        <form method="post" action="/history">
+            <input type="number" name="user_id" placeholder="Введите user_id" value="{{ user_id or '' }}" required>
+            <button type="submit">Запустить анализ</button>
+        </form>
+    </div>
+
+    {% if error %}
+        <div class="block">
+            <p class="error">{{ error }}</p>
+        </div>
+    {% endif %}
+
+    {% if products %}
+        <div class="block">
+            <h2>2. Товары пользователя {{ user_id }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Товар</th>
+                        <th>Aisle</th>
+                        <th>Department</th>
+                        <th>Department RU</th>
+                        <th>Покупок</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.aisle }}</td>
+                            <td>{{ product.department }}</td>
+                            <td>{{ product.department_rus }}</td>
+                            <td>{{ product.order_count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    {% if codex_prompt %}
+        <div class="block">
+            <h2>3. Текст для Codex</h2>
+            <pre>{{ codex_prompt }}</pre>
+        </div>
+    {% endif %}
+
+    {% if recommendation %}
+        <div class="block">
+            <h2>4. Рекомендация Codex</h2>
+            <pre>{{ recommendation }}</pre>
+        </div>
+    {% endif %}
+</body>
+</html>
