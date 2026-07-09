@@ -139,14 +139,40 @@
         </div>
 
         <div class="block">
-            <h2>5. Текст для Codex</h2>
+            <h2>5. Популярные товары из категорий клиента</h2>
+            {% if popular_recommendations %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Категория</th>
+                            <th>Популярность</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in popular_recommendations %}
+                            <tr>
+                                <td>{{ product.product_name }}</td>
+                                <td>{{ product.department_rus }}</td>
+                                <td>{{ product.popularity }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Для этого блока нужна локальная база instacart_db.sqlite.</p>
+            {% endif %}
+        </div>
+
+        <div class="block">
+            <h2>6. Текст для Codex</h2>
             <pre>{{ codex_prompt }}</pre>
         </div>
     {% endif %}
 
     {% if recommendation %}
         <div class="block">
-            <h2>6. Рекомендация Codex</h2>
+            <h2>7. Рекомендация Codex</h2>
             <pre>{{ recommendation }}</pre>
         </div>
     {% endif %}

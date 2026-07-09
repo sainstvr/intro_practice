@@ -1,4 +1,5 @@
 import os
+import sqlite3
 
 import requests
 from dotenv import load_dotenv
@@ -99,6 +100,61 @@ def build_category_stats(products):
 
     result.sort(key=lambda item: item["order_count"], reverse=True)
     return result
+
+
+def get_popular_recommendations(user_id, limit=10):
+    db_path = os.getenv("INSTACART_DB_PATH", "loginom/instacart_db.sqlite")
+
+    if not os.path.exists(db_path):
+        return []
+
+    connection = sqlite3.connect(db_path)
+    connection.row_factory = sqlite3.Row
+
+    query = """
+        WITH user_categories AS (
+            SELECT DISTINCT p.department
+            FROM Orders o
+            JOIN orders_prior op ON op.order_id = o.order_id
+            JOIN products p ON p.product_id = op.product_id
+            WHERE o.user_id = ?
+                AND o.eval_set = 'prior'
+        ),
+        user_products AS (
+            SELECT DISTINCT op.product_id
+            FROM Orders o
+            JOIN orders_prior op ON op.order_id = o.order_id
+            WHERE o.user_id = ?
+                AND o.eval_set = 'prior'
+        )
+        SELECT
+            p.product_name,
+            p.aisle,
+            p.department,
+            p.department_rus,
+            COUNT(*) AS popularity
+        FROM orders_prior op
+        JOIN products p ON p.product_id = op.product_id
+        WHERE p.department IN (SELECT department FROM user_categories)
+            AND p.product_id NOT IN (SELECT product_id FROM user_products)
+        GROUP BY
+            p.product_id,
+            p.product_name,
+            p.aisle,
+            p.department,
+            p.department_rus
+        ORDER BY popularity DESC, p.product_name
+        LIMIT ?
+    """
+
+    rows = connection.execute(query, (user_id, user_id, limit)).fetchall()
+    connection.close()
+
+    recommendations = []
+    for row in rows:
+        recommendations.append(dict(row))
+
+    return recommendations
 
 
 def build_codex_prompt(products_text):

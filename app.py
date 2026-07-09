@@ -5,6 +5,7 @@ from business_rules import (
     build_category_stats,
     build_codex_prompt,
     build_products_text,
+    get_popular_recommendations,
     get_user_history,
 )
 
@@ -87,6 +88,7 @@ def history():
 
         products_text = build_products_text(products)
         category_stats = build_category_stats(products)
+        popular_recommendations = get_popular_recommendations(user_id)
         codex_prompt = build_codex_prompt(products_text)
         recommendation = ask_codex(user_id, products_text)
     except Exception as error:
@@ -101,6 +103,7 @@ def history():
         user_id=user_id,
         products=products,
         category_stats=category_stats,
+        popular_recommendations=popular_recommendations,
         message="Анализ выполнен.",
         codex_prompt=codex_prompt,
         recommendation=recommendation,

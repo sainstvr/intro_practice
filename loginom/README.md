@@ -12,6 +12,7 @@
 - входная переменная: `user_id`;
 - подключение к базе: `../instacart_db.sqlite`;
 - выходные поля: `product_name`, `aisle`, `department`, `department_rus`, `order_count`.
+- для блока популярных рекомендаций Flask читает локальную SQLite-базу из `INSTACART_DB_PATH`.
 
 Как это связано с Flask:
 
@@ -43,3 +44,17 @@ Flask отправляет в Loginom GET-запрос с параметром:
   }
 ]
 ```
+
+Для блока `Популярные товары из категорий клиента` нужна база:
+
+```text
+loginom/instacart_db.sqlite
+```
+
+Путь можно изменить в `.env`:
+
+```env
+INSTACART_DB_PATH=loginom/instacart_db.sqlite
+```
+
+Используемые таблицы: `Orders`, `orders_prior`, `products`.
