@@ -24,12 +24,10 @@
 LOGINOM_URL=адрес_опубликованного_сервиса
 ```
 
-Flask отправляет в Loginom такой JSON:
+Flask отправляет в Loginom GET-запрос с параметром:
 
-```json
-{
-  "user_id": 1
-}
+```text
+?user_id=1
 ```
 
 Ожидаемый ответ:

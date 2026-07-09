@@ -1,6 +1,14 @@
 from flask import Flask, render_template, request, session
 
-from business_rules import ask_codex, build_codex_prompt, build_products_text, get_user_history
+from business_rules import (
+    ask_codex,
+    build_category_stats,
+    build_codex_prompt,
+    build_products_text,
+    find_stopped_products,
+    get_order_times,
+    get_user_history,
+)
 
 
 app = Flask(__name__)
@@ -22,11 +30,34 @@ def login():
             error="user_id должен быть целым числом",
         )
 
-    session["user_id"] = int(user_id_text)
+    user_id = int(user_id_text)
+
+    if user_id <= 0:
+        return render_template(
+            "index.html",
+            error="user_id должен быть больше нуля",
+        )
+
+    try:
+        products = get_user_history(user_id)
+    except Exception as error:
+        return render_template(
+            "index.html",
+            user_id=user_id,
+            error=f"Ошибка при проверке клиента: {error}",
+        )
+
+    if not products:
+        return render_template(
+            "index.html",
+            error=f"Клиент с user_id {user_id} не найден.",
+        )
+
+    session["user_id"] = user_id
 
     return render_template(
         "index.html",
-        user_id=session["user_id"],
+        user_id=user_id,
         message="Пользователь выбран. Теперь можно запустить анализ покупок.",
     )
 
@@ -49,7 +80,17 @@ def history():
 
     try:
         products = get_user_history(user_id)
+        if not products:
+            return render_template(
+                "index.html",
+                user_id=user_id,
+                error=f"Клиент с user_id {user_id} не найден.",
+            )
+
         products_text = build_products_text(products)
+        category_stats = build_category_stats(products)
+        order_times = get_order_times(products)
+        stopped_products = find_stopped_products(products)
         codex_prompt = build_codex_prompt(products_text)
         recommendation = ask_codex(user_id, products_text)
     except Exception as error:
@@ -63,6 +104,9 @@ def history():
         "index.html",
         user_id=user_id,
         products=products,
+        category_stats=category_stats,
+        order_times=order_times,
+        stopped_products=stopped_products,
         message="Анализ выполнен.",
         codex_prompt=codex_prompt,
         recommendation=recommendation,

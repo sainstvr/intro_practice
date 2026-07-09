@@ -56,7 +56,7 @@
     <div class="block">
         <h2>1. Ввод пользователя</h2>
         <form method="post" action="/login">
-            <input type="number" name="user_id" placeholder="Введите user_id" value="{{ user_id or '' }}" required>
+            <input type="number" name="user_id" min="1" placeholder="Введите user_id" value="{{ user_id or '' }}" required>
             <button type="submit">Выбрать пользователя</button>
         </form>
 
@@ -117,14 +117,73 @@
 
     {% if codex_prompt %}
         <div class="block">
-            <h2>4. Текст для Codex</h2>
+            <h2>4. Основные категории</h2>
+            {% if category_stats %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Категория</th>
+                            <th>Покупок</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in category_stats %}
+                            <tr>
+                                <td>{{ item.category }}</td>
+                                <td>{{ item.order_count }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+
+        <div class="block">
+            <h2>5. Время заказа</h2>
+            {% if order_times %}
+                <ul>
+                    {% for item in order_times %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Loginom пока не возвращает время заказа.</p>
+            {% endif %}
+        </div>
+
+        <div class="block">
+            <h2>6. Товары, которые клиент перестал брать</h2>
+            {% if stopped_products %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Категория</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in stopped_products %}
+                            <tr>
+                                <td>{{ product.product_name }}</td>
+                                <td>{{ product.department_rus }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Для этого блока Loginom должен вернуть старые и последние покупки клиента.</p>
+            {% endif %}
+        </div>
+
+        <div class="block">
+            <h2>7. Текст для Codex</h2>
             <pre>{{ codex_prompt }}</pre>
         </div>
     {% endif %}
 
     {% if recommendation %}
         <div class="block">
-            <h2>5. Рекомендация Codex</h2>
+            <h2>8. Рекомендация Codex</h2>
             <pre>{{ recommendation }}</pre>
         </div>
     {% endif %}

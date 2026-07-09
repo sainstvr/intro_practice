@@ -35,7 +35,7 @@ def get_user_history(user_id):
             },
         ]
 
-    response = requests.post(loginom_url, json={"user_id": user_id}, timeout=15)
+    response = requests.get(loginom_url, params={"user_id": user_id}, timeout=15)
 
     if response.status_code >= 400:
         try:
@@ -80,6 +80,54 @@ def build_products_text(products):
         lines.append(line)
 
     return "\n".join(lines)
+
+
+def build_category_stats(products):
+    stats = {}
+
+    for product in products:
+        category = product.get("department_rus") or product.get("department") or "Без категории"
+        order_count = product.get("order_count", 0)
+        stats[category] = stats.get(category, 0) + order_count
+
+    result = []
+    for category, order_count in stats.items():
+        result.append({
+            "category": category,
+            "order_count": order_count,
+        })
+
+    result.sort(key=lambda item: item["order_count"], reverse=True)
+    return result
+
+
+def get_order_times(products):
+    times = []
+
+    for product in products:
+        value = (
+            product.get("order_time")
+            or product.get("order_hour_of_day")
+            or product.get("last_order_time")
+        )
+
+        if value is not None and value not in times:
+            times.append(value)
+
+    return times
+
+
+def find_stopped_products(products):
+    stopped_products = []
+
+    for product in products:
+        old_count = product.get("old_order_count") or product.get("previous_order_count")
+        recent_count = product.get("recent_order_count") or product.get("last_order_count")
+
+        if old_count and recent_count == 0:
+            stopped_products.append(product)
+
+    return stopped_products
 
 
 def build_codex_prompt(products_text):
