@@ -150,9 +150,16 @@ def get_popular_recommendations(user_id, limit=10):
     rows = connection.execute(query, (user_id, user_id, limit)).fetchall()
     connection.close()
 
+    max_popularity = 0
+    if rows:
+        max_popularity = rows[0]["popularity"]
+
     recommendations = []
     for row in rows:
-        recommendations.append(dict(row))
+        item = dict(row)
+        item["total_orders"] = item["popularity"]
+        item["popularity_score"] = round(item["popularity"] / max_popularity * 10, 1)
+        recommendations.append(item)
 
     return recommendations
 

@@ -146,7 +146,7 @@
                         <tr>
                             <th>Товар</th>
                             <th>Категория</th>
-                            <th>Популярность</th>
+                            <th>Популярность 1–10</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -154,7 +154,7 @@
                             <tr>
                                 <td>{{ product.product_name }}</td>
                                 <td>{{ product.department_rus }}</td>
-                                <td>{{ product.popularity }}</td>
+                                <td>{{ product.popularity_score }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
