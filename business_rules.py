@@ -101,35 +101,6 @@ def build_category_stats(products):
     return result
 
 
-def get_order_times(products):
-    times = []
-
-    for product in products:
-        value = (
-            product.get("order_time")
-            or product.get("order_hour_of_day")
-            or product.get("last_order_time")
-        )
-
-        if value is not None and value not in times:
-            times.append(value)
-
-    return times
-
-
-def find_stopped_products(products):
-    stopped_products = []
-
-    for product in products:
-        old_count = product.get("old_order_count") or product.get("previous_order_count")
-        recent_count = product.get("recent_order_count") or product.get("last_order_count")
-
-        if old_count and recent_count == 0:
-            stopped_products.append(product)
-
-    return stopped_products
-
-
 def build_codex_prompt(products_text):
     system_prompt = """Ты — персональный помощник покупателя в продуктовом онлайн-магазине.
 Твоя задача — анализировать историю покупок клиента и давать ему понятные,
