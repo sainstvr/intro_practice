@@ -6,13 +6,18 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 0 16px;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 36px 16px;
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.9)),
+                url("{{ url_for('static', filename='instacart-background.png') }}") center / cover fixed;
         }
 
         .block {
             border: 1px solid #dddddd;
+            background: rgba(255, 255, 255, 0.92);
             padding: 18px;
             margin-bottom: 18px;
         }
@@ -51,7 +56,7 @@
     </style>
 </head>
 <body>
-    <h1>Instacart Demo: Loginom + Flask + Codex</h1>
+    <h1>Instacart</h1>
 
     <div class="block">
         <h2>1. Ввод пользователя</h2>
