@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request, session
 
 from business_rules import (
@@ -11,7 +13,7 @@ from business_rules import (
 
 
 app = Flask(__name__)
-app.secret_key = "intro-practice-secret-key"
+app.secret_key = os.getenv("SECRET_KEY", "intro-practice-secret-key")
 
 
 @app.route("/")
@@ -114,4 +116,3 @@ if __name__ == '__main__':
     import os
     port = int(os.environ.get('PORT', 8000))
     app.run(host='0.0.0.0', port=port)
-
